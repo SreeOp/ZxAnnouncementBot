@@ -1,5 +1,3 @@
-const { Client, MessageActionRow, MessageButton } = require('discord.js');
-
 module.exports = {
   name: 'addstore',
   description: 'Add an item to the store',
