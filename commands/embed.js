@@ -8,12 +8,12 @@ module.exports = {
     .setColor(0x0099FF)
     .setTitle('This is Title')
     .setDescription('Some description here')
-    .setThumbnail('https://cdn.discordapp.com/attachments/1113800537402527903/1239609375635673128/Untitled_design.png?ex=664d6ef1&is=664c1d71&hm=3770aa56d53c8ef070a7785b2f5de1a7dc23e47a23cee631729c58fc90e4442b&')
+    .setThumbnail('https://media.discordapp.net/attachments/1167836302239084586/1198200591508312135/FN1.png?ex=664e6682&is=664d1502&hm=9e0a32f74b328510c16bafa9b5db6b2b883be7597d49dd29bc2466c27dd40079&')
     .addFields(
       { name: 'Field Name ', value: 'Some value here' },
-       { name: 'GlaceYT', value: 'Subscribe to my channel' },
+       { name: 'ZyroniX', value: 'Developer' },
     )
-    .setImage('https://cdn.discordapp.com/attachments/1113800537402527903/1236803979996958740/11.png?ex=664dc637&is=664c74b7&hm=4e5df87c272535fbd67b7b33ad97ee82eeac869feede072a6112f71d7f8dbd20&')
+    .setImage('https://cdn.discordapp.com/attachments/1056903195961610275/1242682120141275176/standard_3.gif?ex=664eb969&is=664d67e9&hm=63d30f8533214bdab9e3660a6e4ee7a5a4f81db3cc3c796fe4b84d671c11c8be&')
     .setTimestamp()
     .setFooter({ text: 'Some footer text here' });
 
