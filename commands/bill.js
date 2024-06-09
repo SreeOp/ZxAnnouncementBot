@@ -1,48 +1,39 @@
-const Discord = require('discord.js');
-
 module.exports = {
   name: 'bill',
-  description: 'Calculate and display a bill for a list of items and their prices.',
+  description: 'Calculate the sum of numbers associated with each item.',
   async execute(message, args) {
-    // Check if the user provided any items and prices
+    // Check if the user provided any items and numbers
     if (args.length === 0) {
-      message.reply('Please provide a list of items and their prices.');
+      message.reply('Please provide a list of items and their numbers.');
       return;
     }
 
-    // Parse the arguments into items and their prices
+    // Parse the arguments into items and their numbers
     const items = [];
-    let totalPrice = 0;
+    let totalNumber = 0;
     args.forEach(arg => {
-      const [itemName, itemPrice] = arg.split(':');
-      if (!itemName || !itemPrice) {
-        message.reply(`Invalid format for item: ${arg}. Please use format: ItemName:Price`);
+      const [itemName, itemNumber] = arg.split(':');
+      if (!itemName || !itemNumber) {
+        message.reply(`Invalid format for item: ${arg}. Please use format: ItemName:Number`);
         return;
       }
-      const price = parseFloat(itemPrice);
-      if (isNaN(price)) {
-        message.reply(`Invalid price for item: ${arg}. Price must be a number.`);
+      const number = parseFloat(itemNumber);
+      if (isNaN(number)) {
+        message.reply(`Invalid number for item: ${arg}. Number must be a valid number.`);
         return;
       }
-      items.push({ name: itemName, price: price });
-      totalPrice += price;
+      items.push({ name: itemName, number: number });
+      totalNumber += number;
     });
 
-    // Generate the bill message
-    const billEmbed = new Discord.MessageEmbed()
-      .setColor('#0099ff')
-      .setTitle('Bill')
-      .setDescription('Here is your bill:')
-      .setTimestamp();
-
+    // Generate the sum message
+    let sumMessage = 'The Bill Is Ready:\n';
     items.forEach(item => {
-      billEmbed.addField(item.name, `$${item.price.toFixed(2)}`, true);
+      sumMessage += `${item.name}: ${item.number}\n`;
     });
+    sumMessage += `\nTotal: ${totalNumber}`;
 
-    billEmbed.addField('Total', `$${totalPrice.toFixed(2)}`, true)
-      .setImage('https://cdn.discordapp.com/attachments/1056903195961610275/1242682120141275176/standard_3.gif?ex=66671d29&is=6665cba9&hm=e71c9029429baf6d151ae124e7e31e639ebcc3bbfaa24e5d6ca365601f3be1dc&');
-
-    // Send the bill message with GIF
-    message.channel.send(billEmbed);
+    // Send the sum message
+    message.channel.send(sumMessage);
   },
 };
