@@ -1,6 +1,6 @@
 module.exports = {
   name: 'bill',
-  description: 'Calculate the sum of numbers associated with each item.',
+  description: 'Calculate the sum of numbers associated with each item and delete the user message.',
   async execute(message, args) {
     // Check if the user provided any items and numbers
     if (args.length === 0) {
@@ -27,13 +27,20 @@ module.exports = {
     });
 
     // Generate the sum message
-    let sumMessage = 'The Bill Is Ready:\n';
+    let sumMessage = 'The bill is ready:\n';
     items.forEach(item => {
       sumMessage += `${item.name}: ${item.number}\n`;
     });
     sumMessage += `\nTotal: ${totalNumber}`;
 
     // Send the sum message
-    message.channel.send(sumMessage);
+    message.channel.send(sumMessage)
+    .then(() => {
+      // Delete the user's message
+      message.delete();
+    })
+    .catch(error => {
+      console.error(`Error sending or deleting message: ${error}`);
+    });
   },
 };
