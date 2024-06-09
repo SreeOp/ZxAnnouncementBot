@@ -1,3 +1,5 @@
+const Discord = require('discord.js');
+
 module.exports = {
   name: 'bill',
   description: 'Calculate and display a bill for a list of items and their prices.',
@@ -26,22 +28,21 @@ module.exports = {
       totalPrice += price;
     });
 
-    // Conversion rate from USD to INR (1 USD = 75.00 INR)
-    const conversionRate = 75.00;
-
-    // Convert the total price to Indian Rupees
-    const totalPriceINR = totalPrice * conversionRate;
-
     // Generate the bill message
-    let billMessage = 'Here is your bill:\n';
-    items.forEach(item => {
-      // Convert item price to INR
-      const itemPriceINR = item.price * conversionRate;
-      billMessage += `${item.name}: ₹${itemPriceINR.toFixed(2)}\n`;
-    });
-    billMessage += `\nTotal: ₹${totalPriceINR.toFixed(2)}`;
+    const billEmbed = new Discord.MessageEmbed()
+      .setColor('#0099ff')
+      .setTitle('Bill')
+      .setDescription('Here is your bill:')
+      .setTimestamp();
 
-    // Send the bill message
-    message.channel.send(billMessage);
+    items.forEach(item => {
+      billEmbed.addField(item.name, `$${item.price.toFixed(2)}`, true);
+    });
+
+    billEmbed.addField('Total', `$${totalPrice.toFixed(2)}`, true)
+      .setImage('https://cdn.discordapp.com/attachments/1056903195961610275/1242682120141275176/standard_3.gif?ex=66671d29&is=6665cba9&hm=e71c9029429baf6d151ae124e7e31e639ebcc3bbfaa24e5d6ca365601f3be1dc&');
+
+    // Send the bill message with GIF
+    message.channel.send(billEmbed);
   },
 };
