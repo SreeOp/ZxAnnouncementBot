@@ -26,12 +26,20 @@ module.exports = {
       totalPrice += price;
     });
 
+    // Conversion rate from USD to INR (1 USD = 75.00 INR)
+    const conversionRate = 75.00;
+
+    // Convert the total price to Indian Rupees
+    const totalPriceINR = totalPrice * conversionRate;
+
     // Generate the bill message
     let billMessage = 'Here is your bill:\n';
     items.forEach(item => {
-      billMessage += `${item.name}: $${item.price.toFixed(2)}\n`;
+      // Convert item price to INR
+      const itemPriceINR = item.price * conversionRate;
+      billMessage += `${item.name}: ₹${itemPriceINR.toFixed(2)}\n`;
     });
-    billMessage += `\nTotal: $${totalPrice.toFixed(2)}`;
+    billMessage += `\nTotal: ₹${totalPriceINR.toFixed(2)}`;
 
     // Send the bill message
     message.channel.send(billMessage);
