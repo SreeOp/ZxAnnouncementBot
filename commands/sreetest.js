@@ -6,7 +6,8 @@ module.exports = {
   async execute(message, args, commandList) {
     // Check if there are any arguments provided
     if (args.length === 0) {
-      message.reply('Please provide payment details.');
+      // Optionally, you can add a reply if desired, or remove this block entirely.
+      // message.reply('Please provide payment details.');
       return;
     }
 
