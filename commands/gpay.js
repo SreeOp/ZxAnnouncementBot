@@ -6,7 +6,8 @@ module.exports = {
   execute(message, args, commandList) {
     // Check if there are any arguments provided
     if (args.length === 0) {
-      message.reply('Please provide payment details.');
+      // Optionally, you can add a reply if desired, or remove this block entirely.
+      // message.reply('Please provide payment details.');
       return;
     }
 
@@ -16,7 +17,7 @@ module.exports = {
     // Delete the user's message that triggered the command (if permissions allow)
     message.delete().catch(console.error);
 
-    // Construct the embed message
+    // Construct the embed message using MessageEmbed
     const embed = new MessageEmbed()
       .setColor('#0099ff')
       .setTitle('Payment Details')
