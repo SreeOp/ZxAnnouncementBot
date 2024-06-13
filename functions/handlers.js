@@ -1,6 +1,6 @@
 const status = "AUTOMATIC";
 const botName = "📢 ANNOUNCEMENT BOT";
-const rtxText = "GlaceYT";
+const rtxText = "ZyroniX";
 const version = "Latest@ v2.0"; 
 const startTime = Date.now();
 
