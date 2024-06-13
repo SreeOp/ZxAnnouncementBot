@@ -25,7 +25,7 @@ module.exports = {
       .setColor('#0099ff') // You can set the color of the embed here
       .setTitle('Payment Details')
       .setDescription(paymentDetails)
-      .setImage('https://example.com/image.jpg') // Replace with the URL of your image
+      .setImage('https://cdn.discordapp.com/attachments/1167836302239084586/1198202736924168252/FN3.png?ex=666b6982&is=666a1802&hm=1681987af9a97642fc1a9d136d010a3e293d349729eb122f10f2b56ae44d5561&') // Replace with the URL of your image
 
     // Send the embed message to the same channel
     try {
