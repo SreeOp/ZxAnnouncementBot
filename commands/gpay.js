@@ -1,26 +1,33 @@
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
   name: 'pay',
   description: 'Uploading Payment Scanner',
   execute(message, args) {
-    const pingEmbed = new EmbedBuilder()
+    // Delete the user's message that triggered the command (if permissions allow)
+    message.delete().catch(console.error);
+
+    const initialEmbed = new MessageEmbed()
       .setColor('#0099ff')
       .setTitle('Gpay')
       .setDescription('Uploading Payment Scanner')
       .setTimestamp();
 
-    message.reply({ embeds: [pingEmbed] }).then(sentMessage => {
+    // Send the initial embed as a reply and store the sent message
+    message.reply({ embeds: [initialEmbed] }).then(sentMessage => {
+      // Calculate the time difference between message creation and reply creation
       const ping = sentMessage.createdTimestamp - message.createdTimestamp;
 
-      const updatedPingEmbed = new EmbedBuilder()
+      // Create an updated embed with payment method details and an image
+      const updatedEmbed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle('Payment Method')
-        .setDescription(`Google Pay`)
-        .setImage(`https://cdn.discordapp.com/attachments/1056903195961610275/1242682120141275176/standard_3.gif?ex=664eb969&is=664d67e9&hm=63d30f8533214bdab9e3660a6e4ee7a5a4f81db3cc3c796fe4b84d671c11c8be&`)
+        .setDescription('Google Pay')
+        .setImage('https://cdn.discordapp.com/attachments/1056903195961610275/1242682120141275176/standard_3.gif')
         .setTimestamp();
 
-      sentMessage.edit({ embeds: [updatedPingEmbed] });
-    });
+      // Edit the sent message to update it with the new embed
+      sentMessage.edit({ embeds: [updatedEmbed] }).catch(console.error);
+    }).catch(console.error);
   },
 };
