@@ -1,12 +1,10 @@
 const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
-const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
-
-
+const autoRoleHandler = require('./functions/autoRole'); // Import the autoRoleHandler function
 
 const client = new Client({
   intents: Object.keys(GatewayIntentBits).map((a) => {
@@ -23,7 +21,6 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
 }
-
 
 client.on('messageCreate', (message) => {
   if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -54,7 +51,6 @@ app.listen(port, () => {
 });
 printWatermark();
 
-
 async function login() {
   try {
     await client.login(process.env.TOKEN);
@@ -69,20 +65,20 @@ async function login() {
   }
 }
 
-
 client.once('ready', () => {
   setTimeout(() => {
-    console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity sucessfully set!`);
+    console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
     client.user.setPresence({
       activities: [{ name: `WZX STORE`, type: ActivityType.Custom }],
       status: 'dnd',
     });
-  }, 2000); 
+  }, 2000);
+
+  const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
+  autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
 });
 
-
 login();
-
 
 setInterval(() => {
   if (!client || !client.user) {
@@ -92,5 +88,3 @@ setInterval(() => {
 }, 15000);
 
 module.exports = client;
-
-
