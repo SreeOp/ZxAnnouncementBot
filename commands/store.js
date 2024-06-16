@@ -1,7 +1,7 @@
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 
 module.exports = {
-    name: 'embed',
+    name: 'store',
     description: 'Send an embedded message with download and video buttons.',
     execute(message, args) {
         // Check if the necessary arguments are provided
