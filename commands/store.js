@@ -14,8 +14,8 @@ module.exports = {
             const videoLink = args[2];
 
             const embed = new EmbedBuilder()
-                .setColor('#800080')
-                .setTitle('Zx Store')
+                .setColor('#0099ff')
+                .setTitle('Custom Store Message')
                 .setDescription('Click the buttons below to download or watch the video.')
                 .setImage(imageUrl);
 
@@ -31,21 +31,10 @@ module.exports = {
                         .setURL(videoLink)
                 );
 
-            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
-
-            const filter = i => i.customId === 'download' && i.user.id === message.author.id;
-            const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
-
-            collector.on('collect', async i => {
-                if (i.customId === 'download') {
-                    await i.deferUpdate();
-                    await i.user.send(`Here is your download link: ${downloadLink}`);
-                }
-            });
-
-            collector.on('end', collected => {
-                console.log(`Collected ${collected.size} interactions.`);
-            });
+            await message.channel.send({ embeds: [embed], components: [row] });
+            
+            // Delete the user's command message
+            await message.delete();
 
         } catch (error) {
             console.error('Error executing command:', error);
