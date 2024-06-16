@@ -5,7 +5,6 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const voiceHandler = require('./functions/voiceHandler'); // Import the voiceHandler function
 
 const client = new Client({
   intents: [
