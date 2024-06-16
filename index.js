@@ -4,12 +4,16 @@ const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
-const autoRoleHandler = require('./functions/autoRole'); // Import the autoRoleHandler function
+const autoRoleHandler = require('./functions/autoRole');
+const voiceHandler = require('./functions/voiceHandler'); // Import the voiceHandler function
 
 const client = new Client({
-  intents: Object.keys(GatewayIntentBits).map((a) => {
-    return GatewayIntentBits[a];
-  }),
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates,
+  ],
 });
 
 const prefix = '$';
@@ -47,7 +51,7 @@ app.get('/', (req, res) => {
   res.sendFile(imagePath);
 });
 app.listen(port, () => {
-  console.log(`🔗 Listening to GlaceYT : http://localhost:${port}`);
+  console.log(`🔗 Listening to ZyroniX : http://localhost:${port}`);
 });
 printWatermark();
 
@@ -76,6 +80,9 @@ client.once('ready', () => {
 
   const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
   autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
+
+  const voiceChannelId = '1249373848173023325'; // Replace with your voice channel ID
+  voiceHandler(client, voiceChannelId); // Call the voice handler function
 });
 
 login();
