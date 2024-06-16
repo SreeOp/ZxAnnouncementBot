@@ -1,24 +1,20 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
-const autoRoleHandler = require('./functions/autoRole'); // Import the autoRoleHandler function
+const autoRoleHandler = require('./functions/autoRole');
 
 const client = new Client({
-    intents: Object.keys(GatewayIntentBits).map((a) => {
-        return GatewayIntentBits[a];
-    }),
+    intents: Object.values(GatewayIntentBits),
 });
 
 const prefix = '$';
 client.commands = new Map();
 
-// Read all command files from the commands directory
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-// Dynamically load commands
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
