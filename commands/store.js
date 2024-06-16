@@ -32,7 +32,11 @@ module.exports = {
 
         await message.channel.send({ embeds: [embed], components: [row] });
 
-        // Delete the user's command message
-        await message.delete();
+        // Attempt to delete the user's command message
+        try {
+            await message.delete();
+        } catch (error) {
+            console.error('Failed to delete the command message:', error);
+        }
     },
 };
