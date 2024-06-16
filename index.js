@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -7,11 +7,18 @@ const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
 
 const client = new Client({
-    intents: Object.values(GatewayIntentBits),
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions,
+    ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 const prefix = '$';
-client.commands = new Map();
+client.commands = new Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -67,7 +74,7 @@ client.once('ready', () => {
     setTimeout(() => {
         console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
         client.user.setPresence({
-            activities: [{ name: `WZX STORE`, type: ActivityType.Custom }],
+            activities: [{ name: `WZX STORE`, type: 'WATCHING' }],
             status: 'dnd',
         });
     }, 2000);
