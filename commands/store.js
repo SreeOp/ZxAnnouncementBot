@@ -1,42 +1,45 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
     name: 'store',
     description: 'Send an embedded message with download and video buttons.',
     async execute(message, args) {
-        if (args.length < 3) {
-            return message.channel.send('Usage: $store [image_url] [download_url] [video_url]');
+        if (args.length < 4) {
+            return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
 
         const imageUrl = args[0];
-        const downloadLink = args[1];
-        const videoLink = args[2];
+        const downloadLabel = args[1];
+        const downloadLink = args[2];
+        const videoLink = args[3];
 
-        const embed = new EmbedBuilder()
+        const embed = new MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Custom Store Message')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl);
 
-        const row = new ActionRowBuilder()
+        const row = new MessageActionRow()
             .addComponents(
-                new ButtonBuilder()
+                new MessageButton()
                     .setCustomId('download')
-                    .setLabel('Download')
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
+                    .setLabel(downloadLabel)
+                    .setStyle('PRIMARY')
+                    .setURL(downloadLink),
+                new MessageButton()
                     .setLabel('Watch Video')
-                    .setStyle(ButtonStyle.Link)
+                    .setStyle('LINK')
                     .setURL(videoLink)
             );
 
-        await message.channel.send({ embeds: [embed], components: [row] });
-
-        // Attempt to delete the user's command message
         try {
+            await message.channel.send({ embeds: [embed], components: [row] });
+
+            // Attempt to delete the user's command message
             await message.delete();
         } catch (error) {
-            console.error('Failed to delete the command message:', error);
+            console.error('Error sending message:', error);
+            message.channel.send('There was an error while trying to send the store message.');
         }
     },
 };
