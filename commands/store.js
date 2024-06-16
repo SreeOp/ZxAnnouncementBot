@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     name: 'store',
@@ -13,21 +13,21 @@ module.exports = {
             const downloadLink = args[1];
             const videoLink = args[2];
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#0099ff')
                 .setTitle('Custom Store Message')
                 .setDescription('Click the buttons below to download or watch the video.')
                 .setImage(imageUrl);
 
-            const row = new MessageActionRow()
+            const row = new ActionRowBuilder()
                 .addComponents(
-                    new MessageButton()
+                    new ButtonBuilder()
                         .setCustomId('download')
                         .setLabel('Download')
-                        .setStyle('PRIMARY'),
-                    new MessageButton()
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
                         .setLabel('Watch Video')
-                        .setStyle('LINK')
+                        .setStyle(ButtonStyle.Link)
                         .setURL(videoLink)
                 );
 
