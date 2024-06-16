@@ -40,28 +40,32 @@ client.on('messageCreate', async (message) => {
     try {
         await command.execute(message, args);
     } catch (error) {
-        console.error(error);
-        message.reply('There was an error trying to execute that command!');
+        console.error('Error executing command:', error);
+        try {
+            await message.channel.send('There was an error trying to execute that command!');
+        } catch (sendError) {
+            console.error('Failed to send error message:', sendError);
+        }
     }
 });
 
-// Event listener for button interactions
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
     if (interaction.customId === 'download') {
         try {
-            // Acknowledge the interaction immediately
             await interaction.deferReply({ ephemeral: true });
 
-            // Send the download link in a DM
             await interaction.user.send(`Here is your download link: ${process.env.DOWNLOAD_LINK}`);
             
-            // Send a follow-up message in the channel
             await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
-            await interaction.editReply('There was an error while processing your request.');
+            try {
+                await interaction.editReply('There was an error while processing your request.');
+            } catch (editError) {
+                console.error('Failed to edit reply:', editError);
+            }
         }
     }
 });
