@@ -39,8 +39,6 @@ client.on('messageCreate', async (message) => {
 
     try {
         await command.execute(message, args);
-        // Delete the user's command message
-        await message.delete();
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command!');
@@ -53,12 +51,17 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.customId === 'download') {
         try {
-            await interaction.deferUpdate();
+            // Acknowledge the interaction immediately
+            await interaction.deferReply({ ephemeral: true });
+
+            // Send the download link in a DM
             await interaction.user.send(`Here is your download link: ${process.env.DOWNLOAD_LINK}`);
-            await interaction.followUp({ content: 'Download link has been sent to your DMs!', ephemeral: true });
+            
+            // Send a follow-up message in the channel
+            await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
-            await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+            await interaction.editReply('There was an error while processing your request.');
         }
     }
 });
