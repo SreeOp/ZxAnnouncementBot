@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -14,7 +14,6 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
     ],
-    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 const prefix = '$';
@@ -56,15 +55,18 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            const downloadLink = process.env.DOWNLOAD_LINK;
-            if (!downloadLink) throw new Error('Download link is not defined');
+            // Get the download link from the button interaction
+            const downloadLink = interaction.message.components[0].components[0].url;
 
+            // Send the download link to the user
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
-            
+
+            // Edit the reply to indicate success
             await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
+                // Respond with an error message to the user
                 await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
             } catch (followUpError) {
                 console.error('Failed to follow up interaction:', followUpError);
