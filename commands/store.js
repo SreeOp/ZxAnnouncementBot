@@ -1,12 +1,12 @@
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 
 module.exports = {
-    name: 'store',
+    name: 'embed',
     description: 'Send an embedded message with download and video buttons.',
     execute(message, args) {
         // Check if the necessary arguments are provided
         if (args.length < 3) {
-            return message.reply('Usage: $embed [image_url] [download_url] [video_url]');
+            return message.channel.send('Usage: $embed [image_url] [download_url] [video_url]');
         }
 
         // Parse arguments
@@ -38,7 +38,7 @@ module.exports = {
         message.channel.send({ embeds: [embed], components: [row] })
             .catch(err => {
                 console.error('Error sending message:', err);
-                message.reply('There was an error while executing the command.');
+                message.channel.send('There was an error while executing the command.');
             });
     },
 };
