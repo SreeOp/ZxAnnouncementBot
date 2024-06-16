@@ -4,15 +4,12 @@ const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
-const autoRoleHandler = require('./functions/autoRole');
+const autoRoleHandler = require('./functions/autoRole'); // Import the autoRoleHandler function
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates,
-  ],
+  intents: Object.keys(GatewayIntentBits).map((a) => {
+    return GatewayIntentBits[a];
+  }),
 });
 
 const prefix = '$';
@@ -72,7 +69,7 @@ client.once('ready', () => {
   setTimeout(() => {
     console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
     client.user.setPresence({
-      activities: [{ name: `ZX STORE`, type: ActivityType.Custom }],
+      activities: [{ name: `WZX STORE`, type: ActivityType.Custom }],
       status: 'dnd',
     });
   }, 2000);
@@ -80,12 +77,12 @@ client.once('ready', () => {
   const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
   autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
 
-  const statusChannelId = '1251856027490455594'; // Replace with your status channel ID
+  const statusChannelId = '123456789012345678'; // Replace with your status channel ID
   const statusChannel = client.channels.cache.get(statusChannelId);
 
   if (statusChannel) {
     const embed = new MessageEmbed()
-      .setColor('#A020F0')
+      .setColor('#0099ff')
       .setTitle('Bot Status')
       .setDescription('The bot is now online and operational!')
       .addFields(
