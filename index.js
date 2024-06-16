@@ -43,8 +43,8 @@ client.on('messageCreate', (message) => {
 const app = express();
 const port = 3000;
 app.get('/', (req, res) => {
-  const imagePath = path.join(__dirname, 'index.html');
-  res.sendFile(imagePath);
+  const indexPath = path.join(__dirname, 'index.html');
+  res.sendFile(indexPath);
 });
 app.listen(port, () => {
   console.log(`🔗 Listening to GlaceYT : http://localhost:${port}`);
@@ -82,7 +82,7 @@ client.once('ready', () => {
 
   if (statusChannel) {
     const embed = new MessageEmbed()
-      .setColor('#800080')
+      .setColor('#0099ff')
       .setTitle('Bot Status')
       .setDescription('The bot is now online and operational!')
       .addFields(
@@ -91,7 +91,7 @@ client.once('ready', () => {
         { name: 'Commands', value: `${getCommandList()}`, inline: false }
       )
       .setTimestamp()
-      .setFooter('ZyroniX');
+      .setFooter('Bot Status');
 
     statusChannel.send({ embeds: [embed] })
       .then(() => console.log('Status message sent successfully.'))
