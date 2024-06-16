@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
   res.sendFile(imagePath);
 });
 app.listen(port, () => {
-  console.log(`🔗 Listening to ZyroniX : http://localhost:${port}`);
+  console.log(`🔗 Listening to GlaceYT : http://localhost:${port}`);
 });
 printWatermark();
 
@@ -83,7 +83,36 @@ client.once('ready', () => {
 
   const voiceChannelId = '1249373848173023325'; // Replace with your voice channel ID
   voiceHandler(client, voiceChannelId); // Call the voice handler function
+
+  const statusChannelId = '1251856027490455594'; // Replace with your status channel ID
+  const statusChannel = client.channels.cache.get(statusChannelId);
+
+  if (statusChannel) {
+    const embed = new EmbedBuilder()
+      .setColor('#0099ff')
+      .setTitle('Bot Status')
+      .setDescription('The bot is now online and operational!')
+      .setTimestamp();
+
+    statusChannel.send({ embeds: [embed] })
+      .then(() => console.log('Status message sent successfully.'))
+      .catch(console.error);
+  } else {
+    console.error('Status channel not found.');
+  }
 });
+
+login();
+
+setInterval(() => {
+  if (!client || !client.user) {
+    console.log('\x1b[31m%s\x1b[0m', '❌ Client Not Logged in, Restarting Process...');
+    process.kill(1);
+  }
+}, 15000);
+
+module.exports = client;
+
 
 login();
 
