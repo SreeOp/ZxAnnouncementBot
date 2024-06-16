@@ -62,9 +62,9 @@ client.on('interactionCreate', async interaction => {
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
-                await interaction.editReply('There was an error while processing your request.');
-            } catch (editError) {
-                console.error('Failed to edit reply:', editError);
+                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+            } catch (followUpError) {
+                console.error('Failed to follow up interaction:', followUpError);
             }
         }
     }
@@ -77,7 +77,7 @@ app.get('/', (req, res) => {
     res.sendFile(indexPath);
 });
 app.listen(port, () => {
-    console.log(`🔗 Listening to GlaceYT : http://localhost:${port}`);
+    console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
 });
 printWatermark();
 
