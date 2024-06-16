@@ -1,10 +1,10 @@
-const { joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, AudioPlayerStatus, VoiceConnectionStatus } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, AudioPlayerStatus, entersState, VoiceConnectionStatus } = require('@discordjs/voice');
 
 const voiceHandler = (client, voiceChannelId) => {
   client.on('ready', () => {
     const voiceChannel = client.channels.cache.get(voiceChannelId);
 
-    if (!voiceChannel || voiceChannel.type !== 'GUILD_VOICE') {
+    if (!voiceChannel || voiceChannel.type !== 2) { // 2 is the type for GUILD_VOICE
       console.error('Voice channel not found or invalid channel type.');
       return;
     }
@@ -13,16 +13,6 @@ const voiceHandler = (client, voiceChannelId) => {
       channelId: voiceChannel.id,
       guildId: voiceChannel.guild.id,
       adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
-    const player = createAudioPlayer({
-      behaviors: {
-        noSubscriber: NoSubscriberBehavior.Play,
-      },
-    });
-
-    player.on(AudioPlayerStatus.Idle, () => {
-      console.log('The audio player is idle.');
     });
 
     connection.on(VoiceConnectionStatus.Ready, () => {
@@ -39,6 +29,16 @@ const voiceHandler = (client, voiceChannelId) => {
         console.error('Failed to reconnect to the voice channel:', error);
         connection.destroy();
       }
+    });
+
+    const player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Play,
+      },
+    });
+
+    player.on(AudioPlayerStatus.Idle, () => {
+      console.log('The audio player is idle.');
     });
 
     connection.subscribe(player);
