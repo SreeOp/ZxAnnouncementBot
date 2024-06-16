@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -81,18 +81,21 @@ client.once('ready', () => {
   const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
   autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
 
-  const voiceChannelId = '1249373848173023325'; // Replace with your voice channel ID
-  voiceHandler(client, voiceChannelId); // Call the voice handler function
-
   const statusChannelId = '1251856027490455594'; // Replace with your status channel ID
   const statusChannel = client.channels.cache.get(statusChannelId);
 
   if (statusChannel) {
-    const embed = new EmbedBuilder()
-      .setColor('#0099ff')
+    const embed = new MessageEmbed()
+      .setColor('#A020F0')
       .setTitle('Bot Status')
       .setDescription('The bot is now online and operational!')
-      .setTimestamp();
+      .addFields(
+        { name: 'Server Count', value: `${client.guilds.cache.size}`, inline: true },
+        { name: 'Uptime', value: `${getUptime()}`, inline: true },
+        { name: 'Commands', value: `${getCommandList()}`, inline: false }
+      )
+      .setTimestamp()
+      .setFooter('ZyroniX);
 
     statusChannel.send({ embeds: [embed] })
       .then(() => console.log('Status message sent successfully.'))
@@ -102,17 +105,20 @@ client.once('ready', () => {
   }
 });
 
-login();
+// Function to get bot uptime
+function getUptime() {
+  const totalSeconds = client.uptime / 1000;
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+}
 
-setInterval(() => {
-  if (!client || !client.user) {
-    console.log('\x1b[31m%s\x1b[0m', '❌ Client Not Logged in, Restarting Process...');
-    process.kill(1);
-  }
-}, 15000);
-
-module.exports = client;
-
+// Function to get list of bot commands
+function getCommandList() {
+  return client.commands.map(cmd => `\`${cmd.name}\`: ${cmd.description}`).join('\n');
+}
 
 login();
 
