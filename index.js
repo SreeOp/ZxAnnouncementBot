@@ -77,12 +77,12 @@ client.once('ready', () => {
   const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
   autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
 
-  const statusChannelId = '123456789012345678'; // Replace with your status channel ID
+  const statusChannelId = '1251856027490455594'; // Replace with your status channel ID
   const statusChannel = client.channels.cache.get(statusChannelId);
 
   if (statusChannel) {
     const embed = new MessageEmbed()
-      .setColor('#0099ff')
+      .setColor('#800080')
       .setTitle('Bot Status')
       .setDescription('The bot is now online and operational!')
       .addFields(
@@ -91,7 +91,7 @@ client.once('ready', () => {
         { name: 'Commands', value: `${getCommandList()}`, inline: false }
       )
       .setTimestamp()
-      .setFooter('Bot Status');
+      .setFooter('ZyroniX');
 
     statusChannel.send({ embeds: [embed] })
       .then(() => console.log('Status message sent successfully.'))
