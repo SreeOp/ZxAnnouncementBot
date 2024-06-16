@@ -27,7 +27,7 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -38,10 +38,28 @@ client.on('messageCreate', (message) => {
     if (!command) return;
 
     try {
-        command.execute(message, args);
+        await command.execute(message, args);
+        // Delete the user's command message
+        await message.delete();
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command!');
+    }
+});
+
+// Event listener for button interactions
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isButton()) return;
+
+    if (interaction.customId === 'download') {
+        try {
+            await interaction.deferUpdate();
+            await interaction.user.send(`Here is your download link: ${process.env.DOWNLOAD_LINK}`);
+            await interaction.followUp({ content: 'Download link has been sent to your DMs!', ephemeral: true });
+        } catch (error) {
+            console.error('Error handling interaction:', error);
+            await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+        }
     }
 });
 
