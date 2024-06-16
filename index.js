@@ -56,7 +56,10 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            await interaction.user.send(`Here is your download link: ${process.env.DOWNLOAD_LINK}`);
+            const downloadLink = process.env.DOWNLOAD_LINK;
+            if (!downloadLink) throw new Error('Download link is not defined');
+
+            await interaction.user.send(`Here is your download link: ${downloadLink}`);
             
             await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
