@@ -3,7 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('
 module.exports = {
     name: 'store',
     description: 'Send an embedded message with download and video buttons.',
-    async execute(message, args) {
+    async execute(client, message, args) {
         if (args.length < 4) {
             return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
