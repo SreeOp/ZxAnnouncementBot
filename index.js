@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Interaction } = require('discord.js');
 const fs = require('fs');
 require('dotenv').config();
 
@@ -9,12 +9,14 @@ const client = new Client({
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.Interactions
     ],
 });
 
 client.commands = new Collection();
 
-// Load commands dynamically from the / directory
+// Load commands dynamically from the root directory
 const commandFiles = fs.readdirSync('./').filter(file => file.endsWith('.js') && file !== 'index.js');
 
 for (const file of commandFiles) {
@@ -23,9 +25,9 @@ for (const file of commandFiles) {
 }
 
 client.on('messageCreate', async (message) => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!message.content.startsWith('$') || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const args = message.content.slice('$'.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     const command = client.commands.get(commandName);
@@ -58,8 +60,6 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
-
-const prefix = '$';
 
 async function login() {
     try {
