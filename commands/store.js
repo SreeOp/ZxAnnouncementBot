@@ -1,38 +1,101 @@
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
-const { addDownloadLink, addWatchLink } = require('../data/database');
+const { Client, CommandInteraction, MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
-    name: 'store',
-    description: 'Store a download link and a watch video link',
-    async execute(message, args) {
-        if (args.length < 2) {
-            return message.channel.send('Please provide a download link and a watch video link.');
-        }
-
-        const downloadLink = args[0];
-        const watchLink = args[1];
-        const messageId = message.id;
-
-        addDownloadLink(messageId, downloadLink);
-        addWatchLink(messageId, watchLink);
-
-        const embed = new MessageEmbed()
-            .setTitle('Download and Watch')
-            .setDescription('Click the buttons below to download or watch the video.')
-            .setImage('YOUR_IMAGE_URL_HERE') // Replace with your image URL
-            .setColor('#0099ff');
-
-        const row = new MessageActionRow().addComponents(
-            new MessageButton()
-                .setCustomId(`download_${messageId}`)
-                .setLabel('Download')
-                .setStyle('PRIMARY'),
-            new MessageButton()
-                .setCustomId(`watch_${messageId}`)
-                .setLabel('Watch Video')
-                .setStyle('SECONDARY')
-        );
-
-        await message.channel.send({ embeds: [embed], components: [row] });
+  name: 'addstore',
+  description: 'Add an item to the store',
+  options: [
+    {
+      name: 'channel',
+      description: 'The channel where you want to add the item.',
+      type: 'CHANNEL',
+      required: true,
     },
+    {
+      name: 'title',
+      description: 'The title of the product.',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'description',
+      description: 'A brief description of the product.',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'image_url',
+      description: 'URL of the image representing the product (optional).',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'download_url',
+      description: 'URL for downloading the product (optional).',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'video_url',
+      description: 'URL linking to a video showcasing the product (optional).',
+      type: 'STRING',
+      required: true,
+    },
+  ],
+
+  /**
+   * @param {Client} client 
+   * @param {CommandInteraction} interaction
+   */
+  async execute(client, interaction) {
+    try {
+      // Access input options
+      const channel = interaction.options.getChannel('channel');
+      const title = interaction.options.getString('title');
+      const description = interaction.options.getString('description');
+      const image_url = interaction.options.getString('image_url') || 'https://media.discordapp.net/attachments/1047948042285895680/1189285777272733796/20231129_192000.png';
+      const download_url = interaction.options.getString('download_url');
+      const video_url = interaction.options.getString('video_url');
+
+      // Create an embed
+      const embed = {
+        color: 0x71368a,
+        title: title,
+        description: description,
+        image: { url: image_url }, // Include image with a default URL
+        thumbnail: { url: interaction.guild.iconURL({ dynamic: true }) },
+        timestamp: new Date(), // Corrected syntax for timestamp
+        footer: { text: 'ZX STORE | powered by CW', iconURL: interaction.guild.iconURL({ dynamic: true }) }
+      };
+
+      // Create buttons if download_url or video_url is provided
+      const buttons = new MessageActionRow();
+      
+      if (download_url) {
+        buttons.addComponents(
+          new MessageButton()
+            .setLabel('Download')
+            .setURL(download_url)
+            .setStyle('LINK')
+        );
+      }
+
+      if (video_url) {
+        buttons.addComponents(
+          new MessageButton()
+            .setLabel('Watch Video')
+            .setURL(video_url)
+            .setStyle('LINK')
+        );
+      }
+
+      // Send the embed with buttons to the specified channel
+      await channel.send({ embeds: [embed], components: [buttons] });
+
+      // Respond to the interaction
+      await interaction.reply('Item added to the store successfully!');
+    } catch (err) {
+      console.error(err);
+      await interaction.reply({ content: 'Failed to add item to the store.', ephemeral: true });
+    }
+  }
 };
