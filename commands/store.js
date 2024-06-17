@@ -11,11 +11,11 @@ module.exports = {
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
         const embed = new EmbedBuilder()
-            .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+            .setColor('#0099ff')
+            .setTitle('Custom Store Message')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+            .setFooter({ text: 'Dev ZyX' });
 
         const row = new ActionRowBuilder()
             .addComponents(
@@ -30,8 +30,12 @@ module.exports = {
             );
 
         try {
-            await message.channel.send({ embeds: [embed], components: [row] });
+            // Send the message with the embed and buttons
+            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
             await message.delete();
+
+            // Store the download link in the message's custom data (to be retrieved later)
+            client.downloadLinks.set(sentMessage.id, downloadLink);
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
