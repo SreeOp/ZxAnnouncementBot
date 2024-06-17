@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { getDownloadLink, addDownloadLink } = require('./data/database'); // Ensure this path is correct
+const { getDownloadLink, getWatchLink } = require('./data/database'); // Import the database module
 
 const client = new Client({
     intents: [
@@ -52,30 +52,42 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
-    if (interaction.customId.startsWith('download_')) {
+    const [action, messageId] = interaction.customId.split('_');
+    if (!messageId) return;
+
+    if (action === 'download') {
+        const downloadLink = getDownloadLink(messageId);
+
+        if (!downloadLink) {
+            return interaction.reply({ content: 'Download link not found.', ephemeral: true });
+        }
+
         try {
             await interaction.deferReply({ ephemeral: true });
-
-            // Extract message ID from the custom ID
-            const messageId = interaction.customId.replace('download_', '');
-
-            // Get the download link from the database
-            const downloadLink = getDownloadLink(messageId);
-
-            if (downloadLink) {
-                // Send the download link to the user
-                await interaction.user.send(`Here is your download link: ${downloadLink}`);
-
-                // Edit the reply to indicate success
-                await interaction.editReply('Download link has been sent to your DMs!');
-            } else {
-                // Edit the reply to indicate failure
-                await interaction.editReply('No download link found for this message.');
-            }
+            await interaction.user.send(`Here is your download link: ${downloadLink}`);
+            await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
-                // Respond with an error message to the user
+                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+            } catch (followUpError) {
+                console.error('Failed to follow up interaction:', followUpError);
+            }
+        }
+    } else if (action === 'watch') {
+        const watchLink = getWatchLink(messageId);
+
+        if (!watchLink) {
+            return interaction.reply({ content: 'Watch link not found.', ephemeral: true });
+        }
+
+        try {
+            await interaction.deferReply({ ephemeral: true });
+            await interaction.user.send(`Here is your watch link: ${watchLink}`);
+            await interaction.editReply('Watch link has been sent to your DMs!');
+        } catch (error) {
+            console.error('Error handling interaction:', error);
+            try {
                 await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
             } catch (followUpError) {
                 console.error('Failed to follow up interaction:', followUpError);
