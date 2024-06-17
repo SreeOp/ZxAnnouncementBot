@@ -27,17 +27,34 @@ function writeDatabase(data) {
 // Function to add a download link
 function addDownloadLink(messageId, downloadLink) {
     const db = readDatabase();
-    db[messageId] = downloadLink;
+    if (!db.downloadLinks) db.downloadLinks = {};
+    db.downloadLinks[messageId] = downloadLink;
     writeDatabase(db);
 }
 
 // Function to get a download link
 function getDownloadLink(messageId) {
     const db = readDatabase();
-    return db[messageId];
+    return db.downloadLinks ? db.downloadLinks[messageId] : null;
+}
+
+// Function to add a watch link
+function addWatchLink(messageId, watchLink) {
+    const db = readDatabase();
+    if (!db.watchLinks) db.watchLinks = {};
+    db.watchLinks[messageId] = watchLink;
+    writeDatabase(db);
+}
+
+// Function to get a watch link
+function getWatchLink(messageId) {
+    const db = readDatabase();
+    return db.watchLinks ? db.watchLinks[messageId] : null;
 }
 
 module.exports = {
     addDownloadLink,
     getDownloadLink,
+    addWatchLink,
+    getWatchLink,
 };
