@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, InteractionType } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -48,23 +48,35 @@ client.on('messageCreate', async (message) => {
     }
 });
 
+const storeDataPath = path.resolve(__dirname, 'storeData.json');
+
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
-    if (interaction.customId === 'download') {
+    if (interaction.customId.startsWith('download-')) {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the embed's footer
-            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+            const storeItemId = interaction.customId.split('-')[1];
 
-            if (!downloadLink) {
-                await interaction.editReply('No download link found.');
+            // Load existing store data
+            let storeData;
+            try {
+                storeData = JSON.parse(fs.readFileSync(storeDataPath, 'utf8'));
+            } catch (error) {
+                console.error('Error reading store data:', error);
+                await interaction.editReply('There was an error retrieving the download link.');
+                return;
+            }
+
+            const storeItem = storeData[storeItemId];
+            if (!storeItem) {
+                await interaction.editReply('Download link not found.');
                 return;
             }
 
             // Send the download link to the user
-            await interaction.user.send(`Here is your download link: ${downloadLink}`);
+            await interaction.user.send(`Here is your download link: ${storeItem.downloadLink}`);
 
             // Edit the reply to indicate success
             await interaction.editReply('Download link has been sent to your DMs!');
