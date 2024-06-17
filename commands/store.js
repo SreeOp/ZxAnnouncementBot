@@ -3,7 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('
 module.exports = {
     name: 'store',
     description: 'Send an embedded message with download and video buttons.',
-    async execute(client, message, args) {
+    async execute(message, args) {
         if (args.length < 4) {
             return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
@@ -11,11 +11,11 @@ module.exports = {
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
         const embed = new EmbedBuilder()
-            .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+            .setColor('#0099ff')
+            .setTitle('Custom Store Message')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter({ text: 'Dev ZyX' });
+            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
 
         const row = new ActionRowBuilder()
             .addComponents(
@@ -30,18 +30,8 @@ module.exports = {
             );
 
         try {
-            // Send the message with the embed and buttons
-            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
-
-            // Store the download link in the message's custom data (to be retrieved later)
-            client.downloadLinks.set(sentMessage.id, downloadLink);
-
-            // Attempt to delete the original command message
-            try {
-                await message.delete();
-            } catch (deleteError) {
-                console.error('Failed to delete the command message:', deleteError);
-            }
+            await message.channel.send({ embeds: [embed], components: [row] });
+            await message.delete();
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
