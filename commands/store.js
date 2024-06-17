@@ -1,4 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { addDownloadLink } = require('../database');
 
 module.exports = {
     name: 'store',
@@ -14,8 +15,7 @@ module.exports = {
             .setColor('#BC13FE')
             .setTitle('ZX STORE')
             .setDescription('Click the buttons below to download or watch the video.')
-            .setImage(imageUrl)
-            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+            .setImage(imageUrl);
 
         const row = new ActionRowBuilder()
             .addComponents(
@@ -30,7 +30,8 @@ module.exports = {
             );
 
         try {
-            await message.channel.send({ embeds: [embed], components: [row] });
+            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
+            addDownloadLink(sentMessage.id, downloadLink);
             await message.delete();
         } catch (error) {
             console.error('Error sending message:', error);
