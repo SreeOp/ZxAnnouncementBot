@@ -27,6 +27,8 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
+let downloadLink = 'https://example.com/your-download-link'; // Replace with your actual download link
+
 client.on('messageCreate', async (message) => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -56,9 +58,6 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Replace with your actual download link
-            const downloadLink = 'https://example.com/your-download-link';
-
             // Send the download link to the user's DM
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
 
@@ -87,7 +86,7 @@ app.get('/', (req, res) => {
     res.sendFile(indexPath);
 });
 app.listen(port, () => {
-    console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
+    console.log(`🔗 Listening to GlaceYT : http://localhost:3000/`);
 });
 printWatermark();
 
