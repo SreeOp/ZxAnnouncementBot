@@ -1,31 +1,40 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     name: 'store',
-    description: 'Displays store information with download and video options.',
+    description: 'Send an embedded message with download and video buttons.',
     async execute(message, args) {
-        // Create an embed for the store information
-        const embed = new MessageEmbed()
-            .setColor('#0099ff')
-            .setTitle('Welcome to WZX STORE')
-            .setDescription('Check out our latest offerings!')
-            .setImage('https://example.com/store-image.png') // Replace with your store image URL
-            .setFooter('Download link: https://example.com/download-link');
+        if (args.length < 4) {
+            return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
+        }
 
-        // Create two buttons: Download and Watch Video
-        const row = new MessageActionRow()
+        const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
+
+        const embed = new EmbedBuilder()
+            .setColor('#0099ff')
+            .setTitle('Custom Store Message')
+            .setDescription('Click the buttons below to download or watch the video.')
+            .setImage(imageUrl)
+            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+
+        const row = new ActionRowBuilder()
             .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('download')
-                    .setLabel('Download')
-                    .setStyle('PRIMARY'),
-                new MessageButton()
+                    .setLabel(downloadLabel)
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
                     .setLabel('Watch Video')
-                    .setURL('https://example.com/watch-video')
-                    .setStyle('LINK')
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(videoLink)
             );
 
-        // Send the embed with buttons to the channel
-        await message.channel.send({ embeds: [embed], components: [row] });
+        try {
+            await message.channel.send({ embeds: [embed], components: [row] });
+            await message.delete();
+        } catch (error) {
+            console.error('Error sending message:', error);
+            message.channel.send('There was an error while trying to send the store message.');
+        }
     },
 };
