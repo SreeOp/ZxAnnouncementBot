@@ -1,41 +1,38 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { addDownloadLink } = require('../database');
+const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { addDownloadLink, addWatchLink } = require('../data/database');
 
 module.exports = {
     name: 'store',
-    description: 'Send an embedded message with download and video buttons.',
+    description: 'Store a download link and a watch video link',
     async execute(message, args) {
-        if (args.length < 4) {
-            return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
+        if (args.length < 2) {
+            return message.channel.send('Please provide a download link and a watch video link.');
         }
 
-        const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
+        const downloadLink = args[0];
+        const watchLink = args[1];
+        const messageId = message.id;
 
-        const embed = new EmbedBuilder()
-            .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+        addDownloadLink(messageId, downloadLink);
+        addWatchLink(messageId, watchLink);
+
+        const embed = new MessageEmbed()
+            .setTitle('Download and Watch')
             .setDescription('Click the buttons below to download or watch the video.')
-            .setImage(imageUrl);
+            .setImage('YOUR_IMAGE_URL_HERE') // Replace with your image URL
+            .setColor('#0099ff');
 
-        const row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('download')
-                    .setLabel(downloadLabel)
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                    .setLabel('Watch Video')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(videoLink)
-            );
+        const row = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setCustomId(`download_${messageId}`)
+                .setLabel('Download')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomId(`watch_${messageId}`)
+                .setLabel('Watch Video')
+                .setStyle('SECONDARY')
+        );
 
-        try {
-            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
-            addDownloadLink(sentMessage.id, downloadLink);
-            await message.delete();
-        } catch (error) {
-            console.error('Error sending message:', error);
-            message.channel.send('There was an error while trying to send the store message.');
-        }
+        await message.channel.send({ embeds: [embed], components: [row] });
     },
 };
