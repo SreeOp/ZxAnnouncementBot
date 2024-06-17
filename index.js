@@ -14,10 +14,11 @@ const client = new Client({
 
 client.commands = new Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+// Load commands dynamically from the / directory
+const commandFiles = fs.readdirSync('./').filter(file => file.endsWith('.js') && file !== 'index.js');
 
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./${file}`);
     client.commands.set(command.name, command);
 }
 
