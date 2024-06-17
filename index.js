@@ -5,7 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { getDownloadLink, addDownloadLink } = require('./data/database'); // Corrected import path
+const { getDownloadLink, addDownloadLink } = require('./data/database'); // Ensure this path is correct
 
 const client = new Client({
     intents: [
