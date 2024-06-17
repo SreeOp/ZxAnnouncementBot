@@ -32,10 +32,16 @@ module.exports = {
         try {
             // Send the message with the embed and buttons
             const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
-            await message.delete();
 
             // Store the download link in the message's custom data (to be retrieved later)
             client.downloadLinks.set(sentMessage.id, downloadLink);
+
+            // Attempt to delete the original command message
+            try {
+                await message.delete();
+            } catch (deleteError) {
+                console.error('Failed to delete the command message:', deleteError);
+            }
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
