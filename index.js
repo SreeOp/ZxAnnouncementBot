@@ -5,6 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
+const { getDownloadLink } = require('./database');
 
 const client = new Client({
     intents: [
@@ -55,8 +56,8 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the embed's footer
-            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+            // Get the download link from the database
+            const downloadLink = getDownloadLink(interaction.message.id);
 
             if (!downloadLink) {
                 await interaction.editReply('No download link found.');
