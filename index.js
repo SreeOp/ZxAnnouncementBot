@@ -5,6 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
+const { decode } = require('querystring'); // Import the querystring module to decode URLs
 
 const client = new Client({
     intents: [
@@ -55,13 +56,16 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the embed's footer
-            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+            // Get the encoded download link from the embed's footer
+            const encodedDownloadLink = interaction.message.embeds[0]?.footer?.text;
 
-            if (!downloadLink) {
+            if (!encodedDownloadLink) {
                 await interaction.editReply('No download link found.');
                 return;
             }
+
+            // Decode the download link to retrieve the original URL
+            const downloadLink = decode(encodedDownloadLink);
 
             // Send the download link to the user
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
