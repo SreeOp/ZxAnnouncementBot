@@ -11,8 +11,8 @@ module.exports = {
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
         const embed = new EmbedBuilder()
-            .setColor('#0099ff')
-            .setTitle('Custom Store Message')
+            .setColor('#BC13FE')
+            .setTitle('ZX STORE')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
             .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
