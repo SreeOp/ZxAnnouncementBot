@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -18,7 +18,6 @@ const client = new Client({
 
 const prefix = '$';
 client.commands = new Collection();
-client.downloadLinks = new Map();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -38,7 +37,7 @@ client.on('messageCreate', async (message) => {
     if (!command) return;
 
     try {
-        await command.execute(client, message, args); // Pass client as the first argument
+        await command.execute(message, args);
     } catch (error) {
         console.error('Error executing command:', error);
         try {
@@ -56,8 +55,8 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Retrieve the download link using the message ID
-            const downloadLink = client.downloadLinks.get(interaction.message.id);
+            // Get the download link from the embed's footer
+            const downloadLink = interaction.message.embeds[0]?.footer?.text;
 
             if (!downloadLink) {
                 await interaction.editReply('No download link found.');
