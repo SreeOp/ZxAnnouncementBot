@@ -1,11 +1,10 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { decode } = require('querystring');
 
 const client = new Client({
     intents: [
@@ -56,16 +55,13 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the encoded download link from the embed's footer
-            const encodedDownloadLink = interaction.message.embeds[0]?.footer?.text;
+            // Get the download link from the embed's footer
+            const downloadLink = interaction.message.embeds[0]?.footer?.text;
 
-            if (!encodedDownloadLink) {
+            if (!downloadLink) {
                 await interaction.editReply('No download link found.');
                 return;
             }
-
-            // Decode the download link to retrieve the original URL
-            const downloadLink = decode(encodedDownloadLink);
 
             // Send the download link to the user
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
