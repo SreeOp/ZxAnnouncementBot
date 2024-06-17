@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     name: 'store',
@@ -8,34 +8,29 @@ module.exports = {
             return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
 
-        const imageUrl = args[0];
-        const downloadLabel = args[1];
-        const downloadLink = args[2];
-        const videoLink = args[3];
+        const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Custom Store Message')
             .setDescription('Click the buttons below to download or watch the video.')
-            .setImage(imageUrl);
+            .setImage(imageUrl)
+            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
 
-        const row = new MessageActionRow()
+        const row = new ActionRowBuilder()
             .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('download')
                     .setLabel(downloadLabel)
-                    .setStyle('PRIMARY')
-                    .setURL(downloadLink),
-                new MessageButton()
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
                     .setLabel('Watch Video')
-                    .setStyle('LINK')
+                    .setStyle(ButtonStyle.Link)
                     .setURL(videoLink)
             );
 
         try {
             await message.channel.send({ embeds: [embed], components: [row] });
-
-            // Attempt to delete the user's command message
             await message.delete();
         } catch (error) {
             console.error('Error sending message:', error);
