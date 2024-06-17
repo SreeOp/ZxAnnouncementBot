@@ -5,7 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { getDownloadLink } = require('./database');
+const { getDownloadLink } = require('./data/database');
 
 const client = new Client({
     intents: [
