@@ -1,5 +1,5 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { encode } = require('querystring');
+const { encode } = require('querystring'); // Import the querystring module to encode URLs
 
 module.exports = {
     name: 'store',
@@ -15,11 +15,11 @@ module.exports = {
         const encodedDownloadLink = encode(downloadLink);
 
         const embed = new MessageEmbed()
-            .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+            .setColor('#0099ff')
+            .setTitle('Custom Store Message')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter(encodedDownloadLink);
+            .setFooter(encodedDownloadLink); // Store the encoded download link in the footer for later retrieval
 
         const row = new MessageActionRow()
             .addComponents(
