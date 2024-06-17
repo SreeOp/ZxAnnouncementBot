@@ -5,7 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { getDownloadLink, getWatchLink } = require('./data/database'); // Import the database module
+const { connectToDatabase, disconnectFromDatabase, addDownloadLink, getDownloadLink } = require('./data/database');
 
 const client = new Client({
     intents: [
@@ -56,7 +56,7 @@ client.on('interactionCreate', async interaction => {
     if (!messageId) return;
 
     if (action === 'download') {
-        const downloadLink = getDownloadLink(messageId);
+        const downloadLink = await getDownloadLink(messageId);
 
         if (!downloadLink) {
             return interaction.reply({ content: 'Download link not found.', ephemeral: true });
@@ -75,24 +75,7 @@ client.on('interactionCreate', async interaction => {
             }
         }
     } else if (action === 'watch') {
-        const watchLink = getWatchLink(messageId);
-
-        if (!watchLink) {
-            return interaction.reply({ content: 'Watch link not found.', ephemeral: true });
-        }
-
-        try {
-            await interaction.deferReply({ ephemeral: true });
-            await interaction.user.send(`Here is your watch link: ${watchLink}`);
-            await interaction.editReply('Watch link has been sent to your DMs!');
-        } catch (error) {
-            console.error('Error handling interaction:', error);
-            try {
-                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
-            } catch (followUpError) {
-                console.error('Failed to follow up interaction:', followUpError);
-            }
-        }
+        // Add similar logic for watch action if needed
     }
 });
 
@@ -114,6 +97,7 @@ async function login() {
         console.log('\x1b[36m%s\x1b[0m', '|    🚀 Commands Loaded successfully!');
         console.log('\x1b[32m%s\x1b[0m', `|    🌼 Logged in as ${client.user.username}`);
         console.log('\x1b[36m%s\x1b[0m', `|    🏡 Bot is in ${client.guilds.cache.size} servers`);
+        await connectToDatabase(); // Connect to MongoDB after logging in
     } catch (error) {
         console.error('\x1b[31m%s\x1b[0m', '❌ Failed to log in:', error);
         console.log('\x1b[31m%s\x1b[0m', '❌ Client Not Login, Restarting Process...');
@@ -142,5 +126,10 @@ setInterval(() => {
         process.kill(1);
     }
 }, 15000);
+
+process.on('SIGINT', async () => {
+    await disconnectFromDatabase(); // Disconnect from MongoDB when process is terminated
+    process.exit(0);
+});
 
 module.exports = client;
