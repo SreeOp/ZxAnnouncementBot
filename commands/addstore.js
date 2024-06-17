@@ -62,9 +62,8 @@ module.exports = {
         title: title,
         description: description,
         image: { url: image_url }, // Include image with a default URL
-        thumbnail: { url: interaction.guild.iconURL({ dynamic: true }) },
-        timestamp: new Date(), // Corrected syntax for timestamp
-        footer: { text: 'ZX STORE | powered by CW', iconURL: interaction.guild.iconURL({ dynamic: true }) }
+        timestamp: new Date(),
+        footer: { text: 'ZX STORE | powered by CW' }
       };
 
       // Create buttons if download_url or video_url is provided
