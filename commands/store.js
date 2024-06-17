@@ -1,4 +1,5 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { encode } = require('querystring'); // Import the querystring module to encode URLs
 
 module.exports = {
     name: 'store',
@@ -10,22 +11,25 @@ module.exports = {
 
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
-        const embed = new EmbedBuilder()
-            .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+        // Encode the download link to hide it in the embed's footer
+        const encodedDownloadLink = encode(downloadLink);
+
+        const embed = new MessageEmbed()
+            .setColor('#BC13FE') // Set embed color to purple
+            .setTitle('ZX STORE') // Set embed title to ZX STORE
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+            .setFooter(encodedDownloadLink); // Store the encoded download link in the footer for later retrieval
 
-        const row = new ActionRowBuilder()
+        const row = new MessageActionRow()
             .addComponents(
-                new ButtonBuilder()
+                new MessageButton()
                     .setCustomId('download')
                     .setLabel(downloadLabel)
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
+                    .setStyle('PRIMARY'),
+                new MessageButton()
                     .setLabel('Watch Video')
-                    .setStyle(ButtonStyle.Link)
+                    .setStyle('LINK')
                     .setURL(videoLink)
             );
 
