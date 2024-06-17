@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { decode } = require('querystring'); // Import the querystring module to decode URLs
+const { decode } = require('querystring');
 
 const client = new Client({
     intents: [
@@ -56,18 +56,10 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the encoded download link from the embed's footer
-            const encodedDownloadLink = interaction.message.embeds[0]?.footer?.text;
+            // Replace with your actual download link
+            const downloadLink = 'https://example.com/your-download-link';
 
-            if (!encodedDownloadLink) {
-                await interaction.editReply('No download link found.');
-                return;
-            }
-
-            // Decode the download link to retrieve the original URL
-            const downloadLink = decode(encodedDownloadLink);
-
-            // Send the download link to the user
+            // Send the download link to the user's DM
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
 
             // Edit the reply to indicate success
@@ -75,12 +67,16 @@ client.on('interactionCreate', async interaction => {
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
-                // Respond with an error message to the user
                 await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
             } catch (followUpError) {
                 console.error('Failed to follow up interaction:', followUpError);
             }
         }
+    } else if (interaction.customId === 'watch_video') {
+        // Handle watch video button click
+        // In this example, we just acknowledge the button click
+        await interaction.deferReply({ ephemeral: true });
+        await interaction.editReply('Opening video link...');
     }
 });
 
