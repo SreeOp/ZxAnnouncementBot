@@ -1,60 +1,71 @@
-const fs = require('fs');
-const path = require('path');
+const { MongoClient, ObjectId } = require('mongodb');
 
-// Ensure the data directory exists
-const dataDir = path.join(__dirname);
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
-}
+let client;
+let database;
 
-// Path to the database file
-const databasePath = path.join(dataDir, 'database.json');
+async function connectToDatabase() {
+    const uri = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
 
-// Function to read the database
-function readDatabase() {
-    if (!fs.existsSync(databasePath)) {
-        fs.writeFileSync(databasePath, JSON.stringify({}));
+    client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+
+    try {
+        // Connect to the MongoDB cluster
+        await client.connect();
+        console.log('Connected to MongoDB');
+
+        // Connect to the specific database
+        database = client.db(dbName);
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+        process.exit(1); // Exit process on error
     }
-    const data = fs.readFileSync(databasePath);
-    return JSON.parse(data);
 }
 
-// Function to write to the database
-function writeDatabase(data) {
-    fs.writeFileSync(databasePath, JSON.stringify(data, null, 2));
+async function disconnectFromDatabase() {
+    try {
+        await client.close();
+        console.log('Disconnected from MongoDB');
+    } catch (error) {
+        console.error('Error disconnecting from MongoDB:', error);
+    }
 }
 
-// Function to add a download link
-function addDownloadLink(messageId, downloadLink) {
-    const db = readDatabase();
-    if (!db.downloadLinks) db.downloadLinks = {};
-    db.downloadLinks[messageId] = downloadLink;
-    writeDatabase(db);
+async function addDownloadLink(messageId, downloadLink) {
+    const downloadLinksCollection = database.collection('downloadLinks');
+
+    try {
+        await downloadLinksCollection.insertOne({
+            _id: new ObjectId(),
+            messageId,
+            downloadLink,
+        });
+        console.log('Download link added to MongoDB');
+    } catch (error) {
+        console.error('Error adding download link to MongoDB:', error);
+    }
 }
 
-// Function to get a download link
-function getDownloadLink(messageId) {
-    const db = readDatabase();
-    return db.downloadLinks ? db.downloadLinks[messageId] : null;
+async function getDownloadLink(messageId) {
+    const downloadLinksCollection = database.collection('downloadLinks');
+
+    try {
+        const link = await downloadLinksCollection.findOne({ messageId });
+        return link ? link.downloadLink : null;
+    } catch (error) {
+        console.error('Error retrieving download link from MongoDB:', error);
+        return null;
+    }
 }
 
-// Function to add a watch link
-function addWatchLink(messageId, watchLink) {
-    const db = readDatabase();
-    if (!db.watchLinks) db.watchLinks = {};
-    db.watchLinks[messageId] = watchLink;
-    writeDatabase(db);
-}
-
-// Function to get a watch link
-function getWatchLink(messageId) {
-    const db = readDatabase();
-    return db.watchLinks ? db.watchLinks[messageId] : null;
-}
+// Similar functions for watch links can be implemented if needed
 
 module.exports = {
+    connectToDatabase,
+    disconnectFromDatabase,
     addDownloadLink,
     getDownloadLink,
-    addWatchLink,
-    getWatchLink,
 };
