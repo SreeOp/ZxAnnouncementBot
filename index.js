@@ -55,8 +55,13 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the button interaction
-            const downloadLink = interaction.message.components[0].components[0].url;
+            // Get the download link from the embed's footer
+            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+
+            if (!downloadLink) {
+                await interaction.editReply('No download link found.');
+                return;
+            }
 
             // Send the download link to the user
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
