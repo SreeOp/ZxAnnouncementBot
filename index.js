@@ -1,23 +1,22 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, Intents, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
-const { printWatermark } = require('./functions/handlers');
-const autoRoleHandler = require('./functions/autoRole');
+const autoRoleHandler = require('./autoRole');
 
 const client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.DirectMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMessageReactions,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.MESSAGE_CONTENTS,
+        Intents.FLAGS.MESSAGE_REACTIONS,
     ],
 });
 
 const prefix = '$';
-client.commands = new Collection();
+client.commands = new Map();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -55,19 +54,24 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the embed's footer
-            const downloadLink = interaction.message.embeds[0]?.footer?.text;
-
-            if (!downloadLink) {
+            // Get the download link and image URL from the embed's footer
+            const footerText = interaction.message.embeds[0]?.footer?.text;
+            if (!footerText) {
                 await interaction.editReply('No download link found.');
                 return;
             }
 
-            // Send the download link to the user
-            await interaction.user.send(`Here is your download link: ${downloadLink}`);
+            const { downloadLink, imageUrl } = JSON.parse(footerText);
+
+            // Send the image along with the download link to the user
+            const embedToSend = {
+                content: `Here is your download link: ${downloadLink}`,
+                files: [imageUrl],
+            };
+            await interaction.user.send(embedToSend);
 
             // Edit the reply to indicate success
-            await interaction.editReply('Download link has been sent to your DMs!');
+            await interaction.editReply('Download link and image have been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
@@ -89,7 +93,6 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
 });
-printWatermark();
 
 async function login() {
     try {
