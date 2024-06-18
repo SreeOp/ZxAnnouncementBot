@@ -89,7 +89,7 @@ app.get('/', (req, res) => {
     res.sendFile(indexPath);
 });
 app.listen(port, () => {
-    console.log(`🔗 Listening to ZyX : http://localhost:3000`);
+    console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
 });
 printWatermark();
 
