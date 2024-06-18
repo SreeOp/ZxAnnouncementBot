@@ -117,8 +117,10 @@ client.once('ready', () => {
     }, 2000);
 
     const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
+    const welcomeChannelId = '1249329942328512614'; // Replace with your welcome channel ID
+
     autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
-    welcomeMessageHandler(client); // Call the welcome message handler function
+    welcomeMessageHandler(client, welcomeChannelId); // Call the welcome message handler function
 });
 
 login();
