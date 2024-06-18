@@ -47,8 +47,14 @@ module.exports = {
             );
 
         try {
-            await message.channel.send({ embeds: [embed], components: [row] });
-            await message.delete();
+            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
+            setTimeout(async () => {
+                try {
+                    await message.delete();
+                } catch (deleteError) {
+                    console.error('Error deleting the original message:', deleteError);
+                }
+            }, 1000); // Add a delay before attempting to delete the message
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
