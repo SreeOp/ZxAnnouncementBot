@@ -1,27 +1,28 @@
-const sqlite3 = require('sqlite3').verbose();
+const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 
-// Path to the SQLite database file
-const dbPath = path.resolve(__dirname, 'storeData.sqlite');
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: path.join(__dirname, 'store.sqlite')
+});
 
-// Create a new database connection
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to the SQLite database.');
-        db.run(`
-            CREATE TABLE IF NOT EXISTS storeItems (
-                id TEXT PRIMARY KEY,
-                downloadLabel TEXT,
-                downloadLink TEXT
-            )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating table:', err.message);
-            }
-        });
+const StoreItem = sequelize.define('StoreItem', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    downloadLabel: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    downloadLink: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 });
 
-module.exports = db;
+async function init() {
+    await sequelize.sync();
+}
+
+module.exports = { StoreItem, init };
