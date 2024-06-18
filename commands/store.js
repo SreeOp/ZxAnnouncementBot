@@ -1,5 +1,7 @@
+// commands/store.js
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { StoreItem, init } = require('../database'); // Ensure the correct path
+const { StoreItem } = require('../database');
+const { v4: uuidv4 } = require('uuid'); // Import UUID for unique IDs
 
 module.exports = {
     name: 'store',
@@ -9,24 +11,8 @@ module.exports = {
             return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
 
-        await init();
-
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
-
-        // Generate a unique ID for this store item
-        const storeItemId = `item-${Date.now()}`;
-
-        // Save the download link in the database
-        try {
-            await StoreItem.create({
-                id: storeItemId,
-                downloadLabel,
-                downloadLink
-            });
-        } catch (error) {
-            console.error('Error saving store data:', error);
-            return message.channel.send('There was an error while trying to save the store data.');
-        }
+        const itemId = uuidv4(); // Generate a unique ID for the store item
 
         const embed = new EmbedBuilder()
             .setColor('#BC13FE')
@@ -37,7 +23,7 @@ module.exports = {
         const row = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId(`download-${storeItemId}`) // Use the store item ID as part of the custom ID
+                    .setCustomId(`download-${itemId}`) // Include the item ID in the button's custom ID
                     .setLabel(downloadLabel)
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
@@ -47,14 +33,14 @@ module.exports = {
             );
 
         try {
-            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
-            setTimeout(async () => {
-                try {
-                    await message.delete();
-                } catch (deleteError) {
-                    console.error('Error deleting the original message:', deleteError);
-                }
-            }, 1000); // Add a delay before attempting to delete the message
+            await StoreItem.create({
+                id: itemId,
+                downloadLabel,
+                downloadLink
+            });
+
+            await message.channel.send({ embeds: [embed], components: [row] });
+            await message.delete();
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
