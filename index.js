@@ -1,3 +1,4 @@
+// index.js
 const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
@@ -5,6 +6,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
+const { StoreItem, init } = require('./database'); // Import StoreItem and init
 
 const client = new Client({
     intents: [
@@ -106,7 +108,8 @@ async function login() {
     }
 }
 
-client.once('ready', () => {
+client.once('ready', async () => {
+    await init(); // Initialize the database connection
     setTimeout(() => {
         console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
         client.user.setPresence({
