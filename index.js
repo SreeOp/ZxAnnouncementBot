@@ -1,11 +1,10 @@
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const { StoreItem, init } = require('./database');
 
 const client = new Client({
     intents: [
@@ -52,17 +51,15 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
-    if (interaction.customId.startsWith('download-')) {
-        const storeItemId = interaction.customId.split('-')[1];
-
-        await init();
-
+    const interactionId = interaction.customId;
+    const isDownloadButton = interactionId.startsWith('download-');
+    if (isDownloadButton) {
+        const storeItemId = interactionId.split('-')[1];
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the database
+            // Fetch the download link from the database
             const storeItem = await StoreItem.findByPk(storeItemId);
-
             if (!storeItem) {
                 await interaction.editReply('No download link found.');
                 return;
@@ -76,7 +73,6 @@ client.on('interactionCreate', async interaction => {
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
-                // Respond with an error message to the user
                 await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
             } catch (followUpError) {
                 console.error('Failed to follow up interaction:', followUpError);
@@ -132,4 +128,4 @@ setInterval(() => {
     }
 }, 15000);
 
-
+module.exports = client;
