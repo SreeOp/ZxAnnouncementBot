@@ -7,7 +7,7 @@ module.exports = (client, welcomeChannelId) => {
             const welcomeEmbed = new EmbedBuilder()
                 .setColor('#BC13FE')
                 .setTitle('Welcome to the Server!')
-                .setDescription(`Hello ${member.user.username}, welcome to ${member.guild.name}! We're glad to have you here.`)
+                .setDescription(`Hello <@${member.id}>, welcome to ${member.guild.name}! We're glad to have you here.`)
                 .setThumbnail(member.user.avatarURL())
                 .setTimestamp()
                 .setFooter({ text: 'Enjoy your stay!', iconURL: member.guild.iconURL() });
