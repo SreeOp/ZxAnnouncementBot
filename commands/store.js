@@ -15,7 +15,7 @@ module.exports = {
             .setTitle(customTitle)
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter(`Download Link: ${downloadLink}`); // Include the download link in the footer
+            .setFooter(`Download Link: ${downloadLink}`);
 
         const row = new MessageActionRow()
             .addComponents(
