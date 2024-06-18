@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
     name: 'store',
@@ -10,28 +10,29 @@ module.exports = {
 
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
-        const embed = new EmbedBuilder()
+        const embed = new MessageEmbed()
             .setColor('#BC13FE')
             .setTitle('ZX STORE')
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+            .setFooter(JSON.stringify({ downloadLink, imageUrl })); // Store download link and image URL in footer as JSON string
 
-        const row = new ActionRowBuilder()
+        const row = new MessageActionRow()
             .addComponents(
-                new ButtonBuilder()
+                new MessageButton()
                     .setCustomId('download')
                     .setLabel(downloadLabel)
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
+                    .setStyle('PRIMARY'),
+                new MessageButton()
                     .setLabel('Watch Video')
-                    .setStyle(ButtonStyle.Link)
+                    .setStyle('LINK')
                     .setURL(videoLink)
             );
 
         try {
-            await message.channel.send({ embeds: [embed], components: [row] });
+            const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
             await message.delete();
+            return sentMessage; // Return the sent message object to access it later
         } catch (error) {
             console.error('Error sending message:', error);
             message.channel.send('There was an error while trying to send the store message.');
