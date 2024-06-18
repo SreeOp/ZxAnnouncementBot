@@ -9,7 +9,7 @@ module.exports = (client, welcomeChannelId) => {
                 .setTitle('Welcome to the Server!')
                 .setDescription(`Hello <@${member.id}>, welcome to ${member.guild.name}! We're glad to have you here.`)
                 .setThumbnail(member.user.avatarURL())
-                .setImage('https://media.discordapp.net/attachments/1056903195961610275/1252641958845878462/1228_1.mp4?ex=6672f53b&is=6671a3bb&hm=989bfc579d2958ad877998db7fdfedb52365060196696480675678e38fb38931&') // Add your GIF URL here
+                .setImage('https://cdn.discordapp.com/attachments/1252647416750936075/1252647490113634324/1228_1-ezgif.com-video-to-gif-converter.gif?ex=6672fa62&is=6671a8e2&hm=f9e012d90b6b1e669f1b700e5941ce8c699b1e8fb92e67eb44262df2e2ba268a&') // Add your GIF URL here
                 .setTimestamp()
                 .setFooter({ text: 'Enjoy your stay!', iconURL: member.guild.iconURL() });
 
