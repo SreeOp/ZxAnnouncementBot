@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageButtonStyle } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -55,7 +55,7 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the embed's footer
+            // Example: Get the download link from the embed's footer
             const downloadLink = interaction.message.embeds[0]?.footer?.text;
 
             if (!downloadLink) {
@@ -63,10 +63,10 @@ client.on('interactionCreate', async interaction => {
                 return;
             }
 
-            // Send the download link to the user
+            // Example: Send the download link to the user
             await interaction.user.send(`Here is your download link: ${downloadLink}`);
 
-            // Edit the reply to indicate success
+            // Example: Edit the reply to indicate success
             await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
@@ -82,37 +82,38 @@ client.on('interactionCreate', async interaction => {
 
 const app = express();
 const port = 3000;
+
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, 'index.html');
     res.sendFile(indexPath);
 });
+
 app.listen(port, () => {
-    console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
+    console.log(`🔗 Express server listening at http://localhost:${port}`);
 });
+
 printWatermark();
 
 async function login() {
     try {
         await client.login(process.env.TOKEN);
         console.log('\x1b[32m%s\x1b[0m', '|    🍔 Bot logged in successfully!');
-        console.log('\x1b[36m%s\x1b[0m', '|    🚀 Commands Loaded successfully!');
-        console.log('\x1b[32m%s\x1b[0m', `|    🌼 Logged in as ${client.user.username}`);
+        console.log('\x1b[36m%s\x1b[0m', '|    🚀 Commands loaded successfully!');
+        console.log('\x1b[32m%s\x1b[0m', `|    🌼 Logged in as ${client.user.tag}`);
         console.log('\x1b[36m%s\x1b[0m', `|    🏡 Bot is in ${client.guilds.cache.size} servers`);
     } catch (error) {
         console.error('\x1b[31m%s\x1b[0m', '❌ Failed to log in:', error);
-        console.log('\x1b[31m%s\x1b[0m', '❌ Client Not Login, Restarting Process...');
+        console.log('\x1b[31m%s\x1b[0m', '❌ Client not logged in, restarting process...');
         process.kill(1);
     }
 }
 
 client.once('ready', () => {
-    setTimeout(() => {
-        console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
-        client.user.setPresence({
-            activities: [{ name: `WZX STORE`, type: 'WATCHING' }],
-            status: 'dnd',
-        });
-    }, 2000);
+    console.log('\x1b[32m%s\x1b[0m', `|    🎯 Activity successfully set!`);
+    client.user.setPresence({
+        activities: [{ name: `WZX STORE`, type: 'WATCHING' }],
+        status: 'dnd',
+    });
 
     const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
     autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
@@ -122,7 +123,7 @@ login();
 
 setInterval(() => {
     if (!client || !client.user) {
-        console.log('\x1b[31m%s\x1b[0m', '❌ Client Not Logged in, Restarting Process...');
+        console.log('\x1b[31m%s\x1b[0m', '❌ Client not logged in, restarting process...');
         process.kill(1);
     }
 }, 15000);
