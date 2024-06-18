@@ -5,6 +5,7 @@ const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
+const welcomeMessageHandler = require('./functions/welcomeMessage'); // Import the welcome message handler
 
 const client = new Client({
     intents: [
@@ -13,6 +14,7 @@ const client = new Client({
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMembers, // Add GuildMembers intent to listen to member events
     ],
 });
 
@@ -87,7 +89,7 @@ app.get('/', (req, res) => {
     res.sendFile(indexPath);
 });
 app.listen(port, () => {
-    console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
+    console.log(`🔗 Listening to ZyX : http://localhost:3000`);
 });
 printWatermark();
 
@@ -116,6 +118,7 @@ client.once('ready', () => {
 
     const autoRoleId = '1251558263632167052'; // Replace with your auto role ID
     autoRoleHandler(client, autoRoleId); // Call the auto-role handler function
+    welcomeMessageHandler(client); // Call the welcome message handler function
 });
 
 login();
