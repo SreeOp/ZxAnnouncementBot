@@ -1,22 +1,23 @@
-const { Client, Intents, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
-const autoRoleHandler = require('./autoRole');
+const { printWatermark } = require('./functions/handlers');
+const autoRoleHandler = require('./functions/autoRole');
 
 const client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.MESSAGE_CONTENTS,
-        Intents.FLAGS.MESSAGE_REACTIONS,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions,
     ],
 });
 
 const prefix = '$';
-client.commands = new Map();
+client.commands = new Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -93,6 +94,7 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`🔗 Listening to GlaceYT : http://localhost:3000`);
 });
+printWatermark();
 
 async function login() {
     try {
