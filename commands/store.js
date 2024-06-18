@@ -1,31 +1,31 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton, MessageButtonStyle } = require('discord.js');
 
 module.exports = {
     name: 'store',
     description: 'Send an embedded message with download and video buttons.',
     async execute(message, args) {
-        if (args.length < 4) {
-            return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
+        if (args.length < 5) {
+            return message.channel.send('Usage: $store [custom_title] [image_url] [download_label] [download_url] [video_url]');
         }
 
-        const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
+        const [customTitle, imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
-        const embed = new EmbedBuilder()
+        const embed = new MessageEmbed()
             .setColor('#BC13FE')
-            .setTitle('ZX STORE')
+            .setTitle(customTitle)
             .setDescription('Click the buttons below to download or watch the video.')
             .setImage(imageUrl)
-            .setFooter({ text: downloadLink }); // Store the download link in the footer for later retrieval
+            .setFooter(`Download Link: ${downloadLink}`); // Include the download link in the footer
 
-        const row = new ActionRowBuilder()
+        const row = new MessageActionRow()
             .addComponents(
-                new ButtonBuilder()
+                new MessageButton()
                     .setCustomId('download')
                     .setLabel(downloadLabel)
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
+                    .setStyle(MessageButtonStyle.PRIMARY),
+                new MessageButton()
                     .setLabel('Watch Video')
-                    .setStyle(ButtonStyle.Link)
+                    .setStyle(MessageButtonStyle.LINK)
                     .setURL(videoLink)
             );
 
