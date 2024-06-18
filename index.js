@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const db = require('./database');
+const { StoreItem, init } = require('./database');
 
 const client = new Client({
     intents: [
@@ -55,33 +55,24 @@ client.on('interactionCreate', async interaction => {
     if (interaction.customId.startsWith('download-')) {
         const storeItemId = interaction.customId.split('-')[1];
 
+        await init();
+
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Get the download link from the SQLite database
-            db.get(
-                `SELECT downloadLink FROM storeItems WHERE id = ?`,
-                [storeItemId],
-                (err, row) => {
-                    if (err) {
-                        console.error('Error retrieving data:', err.message);
-                        return interaction.editReply('There was an error while processing your request.');
-                    }
+            // Get the download link from the database
+            const storeItem = await StoreItem.findByPk(storeItemId);
 
-                    if (!row) {
-                        return interaction.editReply('No download link found.');
-                    }
+            if (!storeItem) {
+                await interaction.editReply('No download link found.');
+                return;
+            }
 
-                    // Send the download link to the user
-                    interaction.user.send(`Here is your download link: ${row.downloadLink}`).then(() => {
-                        // Edit the reply to indicate success
-                        interaction.editReply('Download link has been sent to your DMs!');
-                    }).catch(err => {
-                        console.error('Error sending DM:', err.message);
-                        interaction.editReply('Unable to send you a DM. Please check your DM settings.');
-                    });
-                }
-            );
+            // Send the download link to the user
+            await interaction.user.send(`Here is your download link: ${storeItem.downloadLink}`);
+
+            // Edit the reply to indicate success
+            await interaction.editReply('Download link has been sent to your DMs!');
         } catch (error) {
             console.error('Error handling interaction:', error);
             try {
