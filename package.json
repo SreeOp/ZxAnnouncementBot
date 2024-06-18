@@ -159,6 +159,7 @@
     "send": "^0.18.0",
     "serve-static": "^1.15.0",
     "setprototypeof": "^1.2.0",
+    "sequelize": "^6.6.5",
     "side-channel": "^1.0.4",
     "spotify-playback": "^0.0.1-security",
     "spotify-url-info": "^3.2.6",
