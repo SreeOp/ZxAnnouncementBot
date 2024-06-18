@@ -132,4 +132,4 @@ setInterval(() => {
     }
 }, 15000);
 
-module.exports = client;
+
