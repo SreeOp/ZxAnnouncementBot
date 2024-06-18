@@ -1,9 +1,11 @@
+// database.js
+
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: path.join(__dirname, 'store.sqlite')
+    storage: path.join(__dirname, 'database.sqlite')
 });
 
 const StoreItem = sequelize.define('StoreItem', {
@@ -19,10 +21,15 @@ const StoreItem = sequelize.define('StoreItem', {
         type: DataTypes.STRING,
         allowNull: false
     }
+}, {
+    timestamps: true
 });
 
 async function init() {
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
 }
 
-module.exports = { StoreItem, init };
+module.exports = {
+    StoreItem,
+    init
+};
