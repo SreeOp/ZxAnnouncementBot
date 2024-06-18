@@ -65,7 +65,6 @@
     "domhandler": "^5.0.3",
     "domutils": "^3.1.0",
     "dotenv": "^16.3.1",
-    "enmap": "^5.8.7"
     "ee-first": "^1.1.1",
     "encodeurl": "^1.0.2",
     "entities": "^4.5.0",
