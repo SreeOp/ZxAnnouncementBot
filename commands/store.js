@@ -1,5 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const db = require('../database');
+const { StoreItem, init } = require('../database'); // Ensure the correct path
 
 module.exports = {
     name: 'store',
@@ -9,22 +9,24 @@ module.exports = {
             return message.channel.send('Usage: $store [image_url] [download_label] [download_url] [video_url]');
         }
 
+        await init();
+
         const [imageUrl, downloadLabel, downloadLink, videoLink] = args;
 
         // Generate a unique ID for this store item
         const storeItemId = `item-${Date.now()}`;
 
-        // Save the download link in the SQLite database
-        db.run(
-            `INSERT INTO storeItems (id, downloadLabel, downloadLink) VALUES (?, ?, ?)`,
-            [storeItemId, downloadLabel, downloadLink],
-            (err) => {
-                if (err) {
-                    console.error('Error inserting data:', err.message);
-                    return message.channel.send('There was an error while trying to save the store data.');
-                }
-            }
-        );
+        // Save the download link in the database
+        try {
+            await StoreItem.create({
+                id: storeItemId,
+                downloadLabel,
+                downloadLink
+            });
+        } catch (error) {
+            console.error('Error saving store data:', error);
+            return message.channel.send('There was an error while trying to save the store data.');
+        }
 
         const embed = new EmbedBuilder()
             .setColor('#BC13FE')
