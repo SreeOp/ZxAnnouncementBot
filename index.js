@@ -57,8 +57,7 @@ client.on('interactionCreate', async interaction => {
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            // Replace with your staff role ID
-            const staffRoleId = '1249378110609031250';
+            const staffRoleId = '1249378110609031250'; // Replace with your staff role ID
 
             const guild = interaction.guild;
             const role = guild.roles.cache.get(staffRoleId);
