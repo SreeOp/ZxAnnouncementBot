@@ -83,6 +83,27 @@ client.on('interactionCreate', async interaction => {
                 console.error('Failed to follow up interaction:', followUpError);
             }
         }
+    } else if (interaction.customId === 'download') {
+        try {
+            await interaction.deferReply({ ephemeral: true });
+
+            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+
+            if (!downloadLink) {
+                await interaction.editReply('No download link found.');
+                return;
+            }
+
+            await interaction.user.send(`Here is your download link: ${downloadLink}`);
+            await interaction.editReply('Download link has been sent to your DMs!');
+        } catch (error) {
+            console.error('Error handling interaction:', error);
+            try {
+                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+            } catch (followUpError) {
+                console.error('Failed to follow up interaction:', followUpError);
+            }
+        }
     }
 });
 
