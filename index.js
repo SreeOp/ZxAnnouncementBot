@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -58,7 +58,8 @@ client.on('interactionCreate', async interaction => {
             await interaction.deferReply({ ephemeral: true });
 
             // Get the download link from the embed's footer
-            const downloadLink = interaction.message.embeds[0]?.footer?.text;
+            const footerText = interaction.message.embeds[0]?.footer?.text;
+            const { downloadLink, imageUrl } = footerText ? JSON.parse(footerText) : {};
 
             if (!downloadLink) {
                 await interaction.editReply('No download link found.');
@@ -66,7 +67,10 @@ client.on('interactionCreate', async interaction => {
             }
 
             // Send the download link to the user
-            await interaction.user.send(`Here is your download link: ${downloadLink}`);
+            await interaction.user.send({
+                content: `Here is your download link: ${downloadLink}`,
+                embeds: [new MessageEmbed().setImage(imageUrl)]
+            });
 
             // Edit the reply to indicate success
             await interaction.editReply('Download link has been sent to your DMs!');
@@ -74,6 +78,37 @@ client.on('interactionCreate', async interaction => {
             console.error('Error handling interaction:', error);
             try {
                 // Respond with an error message to the user
+                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
+            } catch (followUpError) {
+                console.error('Failed to follow up interaction:', followUpError);
+            }
+        }
+    } else if (interaction.customId === 'show_staff') {
+        try {
+            await interaction.deferReply({ ephemeral: true });
+
+            // Replace with your staff role ID
+            const staffRoleId = '1249378110609031250';
+
+            const guild = interaction.guild;
+            const role = guild.roles.cache.get(staffRoleId);
+
+            if (!role) {
+                await interaction.editReply('Staff role not found.');
+                return;
+            }
+
+            const members = role.members.map(member => `<@${member.id}>`).join(', ');
+
+            if (!members) {
+                await interaction.editReply('No staff members found.');
+                return;
+            }
+
+            await interaction.editReply(`Staff members: ${members}`);
+        } catch (error) {
+            console.error('Error handling interaction:', error);
+            try {
                 await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
             } catch (followUpError) {
                 console.error('Failed to follow up interaction:', followUpError);
