@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const { printWatermark } = require('./functions/handlers');
 const autoRoleHandler = require('./functions/autoRole');
-const welcomeMessageHandler = require('./functions/welcomeMessage'); // Import the welcome message handler
+const welcomeMessageHandler = require('./functions/welcomeMessage');
 
 const client = new Client({
     intents: [
@@ -14,7 +14,7 @@ const client = new Client({
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.GuildMembers, // Add GuildMembers intent to listen to member events
+        GatewayIntentBits.GuildMembers,
     ],
 });
 
@@ -53,37 +53,7 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
-    if (interaction.customId === 'download') {
-        try {
-            await interaction.deferReply({ ephemeral: true });
-
-            // Get the download link from the embed's footer
-            const footerText = interaction.message.embeds[0]?.footer?.text;
-            const { downloadLink, imageUrl } = footerText ? JSON.parse(footerText) : {};
-
-            if (!downloadLink) {
-                await interaction.editReply('No download link found.');
-                return;
-            }
-
-            // Send the download link to the user
-            await interaction.user.send({
-                content: `Here is your download link: ${downloadLink}`,
-                embeds: [new MessageEmbed().setImage(imageUrl)]
-            });
-
-            // Edit the reply to indicate success
-            await interaction.editReply('Download link has been sent to your DMs!');
-        } catch (error) {
-            console.error('Error handling interaction:', error);
-            try {
-                // Respond with an error message to the user
-                await interaction.followUp({ content: 'There was an error while processing your request.', ephemeral: true });
-            } catch (followUpError) {
-                console.error('Failed to follow up interaction:', followUpError);
-            }
-        }
-    } else if (interaction.customId === 'show_staff') {
+    if (interaction.customId === 'show_staff') {
         try {
             await interaction.deferReply({ ephemeral: true });
 
